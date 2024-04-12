@@ -2,6 +2,6 @@ server:
   port: 8084
 
 oss:
-  host: 127.0.0.1
+  host: 47.97.10.192
   port: 8083
   access_key: d23&db32%^Gf019

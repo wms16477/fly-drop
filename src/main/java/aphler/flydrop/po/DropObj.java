@@ -28,6 +28,8 @@ public class DropObj implements Serializable {
 
     private String content;
 
+    private String ossAddr;
+
     private String fileName;
 
     @JsonFormat(pattern = DatePattern.NORM_DATETIME_MINUTE_PATTERN)

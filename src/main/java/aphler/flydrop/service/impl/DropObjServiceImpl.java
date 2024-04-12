@@ -41,10 +41,9 @@ public class DropObjServiceImpl extends ServiceImpl<DropObjMapper, DropObj> impl
     private OSSClient ossClient;
 
 
-    @Transactional
     @Override
     public String dropText(TextDropDto dto) {
-        if (StringUtils.hasLength(dto.getText()) || dto.getExpiresMinute() == null) {
+        if (!StringUtils.hasLength(dto.getText()) || dto.getExpiresMinute() == null) {
             throw new RuntimeException("参数错误!");
         }
         String code = getCode();
@@ -67,15 +66,16 @@ public class DropObjServiceImpl extends ServiceImpl<DropObjMapper, DropObj> impl
         //获取code
         String code = getCode();
         try {
-            String fileSuffixName = FileUtils.getFileSuffixName(file.getOriginalFilename());
+            String originalFilename = StringUtils.hasLength(file.getOriginalFilename()) ? file.getOriginalFilename() : "file";
+            String fileSuffixName = FileUtils.getFileSuffixName(originalFilename);
             String ossFileName = UUID.randomUUID() + (StringUtils.hasLength(fileSuffixName) ? "." + fileSuffixName : "");
-            String link = ossClient.upload(file.getInputStream(), oss_prefix + "/" + ossFileName, file.getOriginalFilename());
-            log.info("上传文件成功, 文件名: {}", file.getOriginalFilename());
+            String link = ossClient.upload(file.getInputStream(), oss_prefix + "/" + ossFileName, originalFilename);
+            log.info("上传文件成功, 文件名: {}", originalFilename);
             DropObj dropObj = new DropObj();
             dropObj.setType(DropType.FILE.typeKey);
-            dropObj.setContent(link);
+            dropObj.setOssAddr(link);
             dropObj.setCode(code);
-            dropObj.setFileName(file.getOriginalFilename());
+            dropObj.setFileName(originalFilename);
             //设置过期时间
             dropObj.setExpiresTime(DateUtil.offset(new Date(), DateField.MINUTE, expiresMinute));
             save(dropObj);
