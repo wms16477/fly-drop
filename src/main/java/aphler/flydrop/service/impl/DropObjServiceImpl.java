@@ -43,6 +43,7 @@ public class DropObjServiceImpl extends ServiceImpl<DropObjMapper, DropObj> impl
 
     @Override
     public String dropText(TextDropDto dto) {
+        log.info("接收到文本， 参数: {}", dto);
         if (!StringUtils.hasLength(dto.getText()) || dto.getExpiresMinute() == null) {
             throw new RuntimeException("参数错误!");
         }
