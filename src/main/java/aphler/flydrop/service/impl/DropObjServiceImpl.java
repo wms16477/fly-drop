@@ -9,6 +9,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import aphler.flydrop.po.DropObj;
 import aphler.flydrop.service.DropObjService;
@@ -21,7 +22,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Wrapper;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -42,18 +45,33 @@ public class DropObjServiceImpl extends ServiceImpl<DropObjMapper, DropObj> impl
 
 
     @Override
+    public Page<DropObj> getPublicDropObj(Integer pageSize, Integer pageNum) {
+        Page<DropObj> dropObjPage = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<DropObj> queryWrapper = Wrappers.lambdaQuery(DropObj.class);
+        queryWrapper.isNull(DropObj::getCode)
+                .ge(DropObj::getExpiresTime, new Date());
+        return baseMapper.selectPage(dropObjPage, queryWrapper);
+    }
+
+
+    @Override
     public String dropText(TextDropDto dto) {
         log.info("接收到文本， 参数: {}", dto);
-        if (!StringUtils.hasLength(dto.getText()) || dto.getExpiresMinute() == null) {
+        if (!StringUtils.hasLength(dto.getText())) {
             throw new RuntimeException("参数错误!");
         }
-        String code = getCode();
+        String code = null;
+        if (dto.isNeedCode()) {
+            code = getCode();
+        }
         DropObj dropObj = new DropObj();
         dropObj.setCode(code);
         dropObj.setContent(dto.getText());
         dropObj.setType(DropType.TEXT.typeKey);
         //设置过期时间
-        dropObj.setExpiresTime(DateUtil.offset(new Date(), DateField.MINUTE, dto.getExpiresMinute()));
+        if (dto.getExpiresMinute() != null) {
+            dropObj.setExpiresTime(DateUtil.offset(new Date(), DateField.MINUTE, dto.getExpiresMinute()));
+        }
         save(dropObj);
         return code;
     }

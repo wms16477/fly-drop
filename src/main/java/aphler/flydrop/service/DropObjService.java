@@ -2,8 +2,11 @@ package aphler.flydrop.service;
 
 import aphler.flydrop.dto.TextDropDto;
 import aphler.flydrop.po.DropObj;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @author aphler
@@ -11,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @createDate 2024-04-09 17:41:54
  */
 public interface DropObjService extends IService<DropObj> {
+
+    Page<DropObj> getPublicDropObj(Integer pageSize, Integer pageNum);
 
     String dropText(TextDropDto dto);
 

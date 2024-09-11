@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+				PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="aphler.flydrop.mapper.DropObjMapper">
 
+	<select id="getPublicDropObj" resultType="aphler.flydrop.po.DropObj">
+		select *
+		from drop_obj
+		where deleted = 0
+			and code is null
+			and (expires_time >= now() or expires_time is null)
+		order by create_time
+	</select>
 </mapper>

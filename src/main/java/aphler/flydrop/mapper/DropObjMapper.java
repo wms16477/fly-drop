@@ -3,6 +3,8 @@ package aphler.flydrop.mapper;
 import aphler.flydrop.po.DropObj;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
  * @author aphler
  * @description 针对表【drop_obj(传输对象)】的数据库操作Mapper
@@ -10,6 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Entity aphler.flydrop.po.DropObj
  */
 public interface DropObjMapper extends BaseMapper<DropObj> {
+
+    List<DropObj> getPublicDropObj();
 
 }
 
